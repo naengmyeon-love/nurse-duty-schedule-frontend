@@ -126,6 +126,40 @@ export async function reviewShiftChangeAction(formData: FormData) {
   redirect(result.redirect ?? "/head/shift-changes?error=failed");
 }
 
+function revalidateCarePages() {
+  revalidatePath("/head/dashboard");
+  revalidatePath("/head/patient-assignments");
+  revalidatePath("/head/handoffs");
+  revalidatePath("/nurse");
+  revalidatePath("/nurse/patient-assignments");
+  revalidatePath("/nurse/handoffs");
+}
+
+export async function savePatientAction(formData: FormData) {
+  await run("savePatientAction", formData);
+  revalidateCarePages();
+}
+
+export async function updatePatientStatusAction(formData: FormData) {
+  await run("updatePatientStatusAction", formData);
+  revalidateCarePages();
+}
+
+export async function savePatientAssignmentsAction(formData: FormData) {
+  await run("savePatientAssignmentsAction", formData);
+  revalidateCarePages();
+}
+
+export async function saveHandoffAction(formData: FormData) {
+  await run("saveHandoffAction", formData);
+  revalidateCarePages();
+}
+
+export async function confirmHandoffAction(formData: FormData) {
+  await run("confirmHandoffAction", formData);
+  revalidateCarePages();
+}
+
 export async function resetDemoDataAction() {
   await run("resetDemoDataAction");
   await clearFrontendSession();

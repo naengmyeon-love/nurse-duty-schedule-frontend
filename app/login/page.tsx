@@ -2,6 +2,8 @@ import { CalendarCheck2, CheckCircle2, ShieldCheck } from "lucide-react";
 import { redirect } from "next/navigation";
 import { loginAction } from "@/app/actions";
 import { DEMO_ACCOUNTS } from "@/lib/domain";
+
+export const dynamic = "force-dynamic";
 import { getCurrentUser } from "@/lib/auth";
 
 export const metadata = { title: "로그인" };

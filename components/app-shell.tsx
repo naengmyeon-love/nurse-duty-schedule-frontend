@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { ArrowLeftRight, CalendarDays, ClipboardCheck, LayoutDashboard, LogOut, Plane, Stethoscope, Users } from "lucide-react";
+import { ArrowLeftRight, BedSingle, CalendarDays, ClipboardCheck, ClipboardPenLine, LayoutDashboard, LogOut, Plane, Stethoscope, Users } from "lucide-react";
 import type { ReactNode } from "react";
 import { logoutAction } from "@/app/actions";
 
@@ -7,18 +7,22 @@ type NavItem = { href: string; label: string; icon: typeof LayoutDashboard };
 
 const headItems: NavItem[] = [
   { href: "/head/dashboard", label: "대시보드", icon: LayoutDashboard },
-  { href: "/head/nurses", label: "간호사 관리", icon: Users },
-  { href: "/head/requests", label: "희망 OFF", icon: ClipboardCheck },
-  { href: "/head/vacations", label: "휴가 현황", icon: Plane },
   { href: "/head/schedule", label: "듀티표", icon: CalendarDays },
+  { href: "/head/requests", label: "희망 OFF", icon: ClipboardCheck },
+  { href: "/head/patient-assignments", label: "환자배정", icon: BedSingle },
+  { href: "/head/handoffs", label: "인수인계", icon: ClipboardPenLine },
+  { href: "/head/vacations", label: "휴가 현황", icon: Plane },
+  { href: "/head/nurses", label: "간호사 관리", icon: Users },
   { href: "/head/shift-changes", label: "근무 변동", icon: ArrowLeftRight },
 ];
 
 const nurseItems: NavItem[] = [
-  { href: "/nurse", label: "내 현황", icon: LayoutDashboard },
+  { href: "/nurse", label: "대시보드", icon: LayoutDashboard },
+  { href: "/nurse/schedule", label: "듀티표", icon: CalendarDays },
   { href: "/nurse/request-off", label: "희망 OFF", icon: ClipboardCheck },
+  { href: "/nurse/patient-assignments", label: "환자배정", icon: BedSingle },
+  { href: "/nurse/handoffs", label: "인수인계", icon: ClipboardPenLine },
   { href: "/nurse/vacations", label: "휴가·연차", icon: Plane },
-  { href: "/nurse/schedule", label: "확정 듀티표", icon: CalendarDays },
   { href: "/nurse/shift-changes", label: "근무 변동", icon: ArrowLeftRight },
 ];
 

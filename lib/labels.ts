@@ -1,4 +1,4 @@
-import type { RequestStatus, ScheduleStatus, ShiftChangeStatus, ShiftChangeType, ShiftType, VacationType } from "@/lib/domain";
+import type { HandoffStatus, PatientStatus, RequestStatus, ScheduleStatus, ShiftChangeStatus, ShiftChangeType, ShiftType, VacationType } from "@/lib/domain";
 
 export const requestStatusLabel: Record<RequestStatus, string> = {
   REQUESTED: "신청",
@@ -39,4 +39,17 @@ export const shiftChangeStatusLabel: Record<ShiftChangeStatus, string> = {
   APPROVED: "변경 완료",
   REJECTED: "반려·거절",
   CANCELLED: "취소",
+};
+
+export const handoffStatusLabel: Record<HandoffStatus, string> = {
+  NOT_STARTED: "미작성",
+  IN_PROGRESS: "작성 중",
+  DELIVERED: "전달 완료",
+  CONFIRMED: "확인 완료",
+};
+
+export const patientStatusLabel: Record<PatientStatus, string> = {
+  ADMITTED: "입원",
+  DISCHARGED: "퇴원",
+  TRANSFERRED: "전동",
 };
