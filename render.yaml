@@ -1,0 +1,17 @@
+services:
+  - type: web
+    name: nurse-duty-schedule-frontend
+    runtime: node
+    plan: free
+    buildCommand: npm ci && npm run build
+    startCommand: npm run start
+    healthCheckPath: /login
+    envVars:
+      - key: NODE_VERSION
+        value: 22
+      - key: BACKEND_API_URL
+        sync: false
+      - key: BACKEND_SHARED_SECRET
+        sync: false
+      - key: NEXT_SERVER_ACTIONS_ENCRYPTION_KEY
+        sync: false
