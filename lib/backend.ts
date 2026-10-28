@@ -76,8 +76,9 @@ export async function callRpc(action: string, fields: Record<string, string> = {
     headers: await authHeaders(true),
     body: JSON.stringify({ action, fields }),
   });
-  if (!response.ok) return { ok: false, error: response.status === 403 ? "forbidden" : "failed" };
-  return response.json() as Promise<RpcResult>;
+  const result = await response.json().catch(() => null) as RpcResult | null;
+  if (!result || typeof result.ok !== "boolean") return { ok: false, error: response.status === 403 ? "forbidden" : "failed" };
+  return result;
 }
 
 export async function saveScheduleEntry(payload: unknown) {
@@ -86,6 +87,11 @@ export async function saveScheduleEntry(payload: unknown) {
     headers: await authHeaders(true),
     body: JSON.stringify(payload),
   });
+}
+
+export async function downloadSchedule(month: string) {
+  const query = new URLSearchParams({ month });
+  return backendRequest(`/api/v1/schedule-export?${query}`, { headers: await authHeaders() });
 }
 
 export function roleHome(role: Role) {

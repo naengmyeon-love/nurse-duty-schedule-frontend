@@ -1,7 +1,7 @@
 const pad = (value: number) => String(value).padStart(2, "0");
 
 export function currentMonth(now = new Date()) {
-  return `${now.getFullYear()}-${pad(now.getMonth() + 1)}`;
+  return currentDateInKorea(now).slice(0, 7);
 }
 
 export function currentDateInKorea(now = new Date()) {

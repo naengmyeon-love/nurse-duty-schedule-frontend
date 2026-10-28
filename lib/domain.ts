@@ -26,7 +26,7 @@ export type ShiftRequirementDto = { id: number; scheduleId: number; date: string
 export type OffRequestDto = { id: number; wardId: number; userId: number; date: string; memo: string | null; status: RequestStatus; user?: NamedUserDto };
 export type VacationRequestDto = { id: number; wardId: number; userId: number; startDate: string; endDate: string; type: VacationType; memo: string | null; status: RequestStatus; user?: NamedUserDto };
 export type ChangeLogDto = { id: number; date: string | null; beforeShift: ShiftType | null; afterShift: ShiftType | null; action: string; note: string | null; changedBy: { name: string } };
-export type ScheduleDto = { id: number; wardId: number; month: string; status: ScheduleStatus; entries: ScheduleEntryDto[]; requirements?: ShiftRequirementDto[]; changeLogs?: ChangeLogDto[] };
+export type ScheduleDto = { id: number; wardId: number; month: string; status: ScheduleStatus; revision?: number; generationReport?: GenerationReportDto | null; proposal?: ScheduleProposalDto | null; entries: ScheduleEntryDto[]; requirements?: ShiftRequirementDto[]; changeLogs?: ChangeLogDto[] };
 export type ShiftChangeDto = {
   id: number;
   wardId: number;
@@ -99,14 +99,56 @@ export type HeadDashboardView = { nurses: Array<{ id: number }>; offRequests: Ar
 export type HeadNursesView = { nurses: NurseDto[] };
 export type HeadRequestsView = { requests: Array<OffRequestDto & { user: NamedUserDto }> };
 export type HeadVacationsView = { vacations: Array<VacationRequestDto & { user: NamedUserDto }> };
-export type HeadScheduleView = { schedule: (ScheduleDto & { requirements: ShiftRequirementDto[]; changeLogs: ChangeLogDto[] }) | null; nurses: NamedUserDto[]; offRequests: Array<{ userId: number; date: string }>; vacations: Array<{ userId: number; startDate: string; endDate: string }> };
+export type WorkShift = "D" | "E" | "N";
+export type FairnessMetric = {
+  userId: number; name: string; night: number; weekend: number;
+  availableDays: number; availableWeekendDays: number; nightCapacity: number;
+  expectedNight: number; expectedWeekend: number;
+  requested: number; honored: number; missed: number; pending: number;
+  nightBurden: number; weekendBurden: number; offMissedBurden: number;
+};
+export type FairnessHistoryDto = { userId: number; nightBurden: number; weekendBurden: number; offMissedBurden: number };
+export type RequestOutcome = { id?: number; userId: number; date: string; status: string; outcome: "HONORED" | "MISSED" | "PENDING" };
+export type FairnessDto = { metrics: FairnessMetric[]; requests: RequestOutcome[] };
+export type RosterValidationDto = {
+  issues: Array<{ key: string; code: string; userId?: number; date?: string; message: string }>;
+  shortages: Array<{ date: string; shift: WorkShift; shortage: number }>;
+  unassigned: Array<{ userId: number; date: string }>;
+  unknownBoundaries: Array<{ side: "previous" | "next"; userId: number; date: string }>;
+  valid: boolean;
+};
+export type ShortageCandidatesDto = { date: string; shift: WorkShift; shortage: number; candidates: Array<{ userId: number; reasons: string[] }> };
+export type GeneratedAssignmentDto = { userId: number; date: string; shift: ShiftType };
+export type GenerationReportDto = {
+  assignments: GeneratedAssignmentDto[];
+  warnings: ShortageCandidatesDto[];
+  relaxedConstraints: number;
+  unfulfilledRequestedOff: number;
+  repair: { attempts: number; elapsedMs: number; shortagesBefore: number; shortagesAfter: number; changes: Array<{ userId: number; date: string; beforeShift: ShiftType; afterShift: ShiftType }>; status: "complete" | "limit" | "unresolved" };
+};
+export type ScheduleProposalDto = { assignments: GeneratedAssignmentDto[]; report: GenerationReportDto; baseRevision: number };
+export type HeadScheduleView = {
+  schedule: (ScheduleDto & { requirements: ShiftRequirementDto[]; changeLogs: ChangeLogDto[] }) | null;
+  nurses: Array<NamedUserDto & { active?: boolean }>;
+  allNurses: NamedUserDto[];
+  offRequests: Array<{ userId: number; date: string; status?: RequestStatus }>;
+  vacations: Array<{ userId: number; startDate: string; endDate: string }>;
+  validation: RosterValidationDto | null;
+  shortageCandidates: ShortageCandidatesDto[];
+  fairness: FairnessDto;
+  fairnessHistory: FairnessHistoryDto[];
+  vacationDates: Array<{ userId: number; date: string }>;
+  proposalChanges: Array<GeneratedAssignmentDto & { beforeShift: ShiftType | null }>;
+  generationReport: GenerationReportDto | null;
+  proposal: ScheduleProposalDto | null;
+};
 export type HeadShiftChangesView = { reviewItems: Array<{ request: ShiftChangeDto & { schedule: { id: number; month: string; status: ScheduleStatus } }; warnings: string[] }>; history: ShiftChangeDto[] };
 export type HeadPatientAssignmentsView = { date: string; shift: CareShift; patients: PatientDto[]; nurses: NamedUserDto[]; assignments: PatientAssignmentDto[] };
 export type HeadHandoffsView = { date: string; handoffs: HandoffDto[] };
 export type NurseHomeView = { offRequests: OffRequestDto[]; vacations: VacationRequestDto[]; schedule: ScheduleDto | null; todayDuty: ScheduleEntryDto | null; assignments: PatientAssignmentDto[]; outgoing: HandoffDto[]; incoming: HandoffDto[] };
 export type NurseOffView = { requests: OffRequestDto[] };
 export type NurseVacationsView = { vacations: VacationRequestDto[] };
-export type NurseScheduleView = { schedule: ScheduleDto | null; nurses: NamedUserDto[] };
+export type NurseScheduleView = { schedule: ScheduleDto | null; nurses: NamedUserDto[]; fairness: FairnessDto | null; fairnessHistory: FairnessHistoryDto[]; originalRequests: RequestOutcome[] };
 export type NurseShiftChangesView = { futureEntries: ScheduleEntryDto[]; nurses: NamedUserDto[]; relatedRequests: ShiftChangeDto[]; openRequests: ShiftChangeDto[] };
 export type NursePatientAssignmentsView = { date: string; shift: CareShift; assignments: PatientAssignmentDto[] };
 export type NurseHandoffsView = { date: string; outgoing: HandoffDto[]; incoming: HandoffDto[] };
