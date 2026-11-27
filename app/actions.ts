@@ -15,6 +15,12 @@ function fields(formData: FormData) {
 
 async function run(action: string, formData?: FormData) {
   const result = await callRpc(action, formData ? fields(formData) : {});
+  // Constraint failures are explicit backend redirects, including redirects returned by a server action.
+  // Only local app paths may be followed; backend addresses and credentials stay on the server.
+  if (result.redirect && /^\/(?:head|nurse)(?:\/|\?|$)|^\/login(?:\?|$)/.test(result.redirect) && !/[\\\r\n]/.test(result.redirect)) {
+    const target = new URL(result.redirect, "https://frontend.invalid");
+    if (!result.ok || target.searchParams.has("error") || target.pathname === "/login") redirect(`${target.pathname}${target.search}${target.hash}`);
+  }
   if (!result.ok) throw new Error("요청을 처리하지 못했습니다.");
   return result;
 }
@@ -92,6 +98,18 @@ export async function generateScheduleAction(formData: FormData) {
   redirect(result.redirect ?? "/head/schedule?error=failed");
 }
 
+export async function applyScheduleProposalAction(formData: FormData) {
+  const result = await run("applyScheduleProposalAction", formData);
+  revalidateAll();
+  redirect(result.redirect ?? "/head/schedule");
+}
+
+export async function discardScheduleProposalAction(formData: FormData) {
+  const result = await run("discardScheduleProposalAction", formData);
+  revalidateAll();
+  redirect(result.redirect ?? "/head/schedule");
+}
+
 export async function setScheduleStatusAction(formData: FormData) {
   await run("setScheduleStatusAction", formData);
   revalidateAll();
@@ -106,6 +124,12 @@ export async function createShiftChangeAction(formData: FormData) {
   const result = await run("createShiftChangeAction", formData);
   revalidateAll();
   redirect(result.redirect ?? "/nurse/shift-changes?error=failed");
+}
+
+export async function requestEmergencyCoverAction(formData: FormData) {
+  const result = await run("requestEmergencyCoverAction", formData);
+  revalidateAll();
+  redirect(result.redirect ?? "/head/emergency?error=stale");
 }
 
 export async function respondShiftChangeAction(formData: FormData) {
