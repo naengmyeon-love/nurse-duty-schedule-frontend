@@ -126,6 +126,12 @@ export async function createShiftChangeAction(formData: FormData) {
   redirect(result.redirect ?? "/nurse/shift-changes?error=failed");
 }
 
+export async function requestEmergencyCoverAction(formData: FormData) {
+  const result = await run("requestEmergencyCoverAction", formData);
+  revalidateAll();
+  redirect(result.redirect ?? "/head/emergency?error=stale");
+}
+
 export async function respondShiftChangeAction(formData: FormData) {
   const result = await run("respondShiftChangeAction", formData);
   revalidateAll();

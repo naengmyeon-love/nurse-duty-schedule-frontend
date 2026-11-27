@@ -55,3 +55,22 @@ test("실제 프런트 편집 proxy는 간호사 역할을 차단하고 backend�
   assert.match(issue.error, /승인/);
   assert.ok(issue.issues.length > 0);
 });
+
+test("수간호사 화면이 확정 근무와 모형·직접 선택 결과를 렌더링한다", async () => {
+  const head = await login("HTTP 관리자", "HTTP-H001");
+  const get = async (path: string) => {
+    const response = await fetch(frontend + path, { headers: cookie(head) });
+    assert.equal(response.status, 200);
+    return response.text();
+  };
+  assert.match(await get("/head/emergency?date=2030-05-10"), /미충원 보고 이력/);
+  const blind = await get("/head/emergency/trial?seed=5");
+  assert.match(blind, /당일 OFF 명단/);
+  assert.doesNotMatch(blind, /같은 결원에 대한 결과/);
+  const compared = await get("/head/emergency/trial?seed=5&choice=none");
+  assert.match(compared, /같은 결원에 대한 결과/);
+  assert.match(compared, /명단순 첫 적격자/);
+  assert.match(compared, /미해결/);
+  assert.match(compared, /개인 최대 주말 초과/);
+  assert.match(compared, /고정 순환표/);
+});

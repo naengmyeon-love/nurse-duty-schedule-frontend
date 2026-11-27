@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { ArrowLeftRight, BedSingle, CalendarDays, ClipboardCheck, ClipboardPenLine, LayoutDashboard, LogOut, Plane, Stethoscope, Users } from "lucide-react";
+import { ArrowLeftRight, UserRoundSearch, BedSingle, CalendarDays, ClipboardCheck, ClipboardPenLine, LayoutDashboard, LogOut, Plane, Stethoscope, Users } from "lucide-react";
 import type { ReactNode } from "react";
 import { logoutAction } from "@/app/actions";
 
@@ -13,6 +13,7 @@ const headItems: NavItem[] = [
   { href: "/head/handoffs", label: "인수인계", icon: ClipboardPenLine },
   { href: "/head/vacations", label: "휴가 현황", icon: Plane },
   { href: "/head/nurses", label: "간호사 관리", icon: Users },
+  { href: "/head/emergency", label: "긴급 결원", icon: UserRoundSearch },
   { href: "/head/shift-changes", label: "근무 변동", icon: ArrowLeftRight },
 ];
 
